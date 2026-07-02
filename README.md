@@ -61,7 +61,7 @@ POST /auth/login      { email, password }
 
 ### Properties
 ```
-GET    /properties              ?search=&type=
+GET    /properties          
 POST   /properties
 GET    /properties/:id
 PUT    /properties/:id
