@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [77.5900, 12.9750],
+          [77.5950, 12.9700]
+        ]
+      },
+      "properties": {
+        "name": "This should be rejected — LineString not Polygon"
+      }
+    }
+  ]
+}

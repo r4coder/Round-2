@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.5900, 12.9750],
+          [77.5950, 12.9750],
+          [77.5950, 12.9700],
+          [77.5900, 12.9700],
+          [77.5900, 12.9750]
+        ]]
+      },
+      "properties": {
+        "name": "Fairway A",
+        "type": "Fairway",
+        "mower_count": 2,
+        "status": "Active"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.5925, 12.9760],
+          [77.5975, 12.9760],
+          [77.5975, 12.9710],
+          [77.5925, 12.9710],
+          [77.5925, 12.9760]
+        ]]
+      },
+      "properties": {
+        "name": "Rough B — overlaps Fairway A",
+        "type": "Rough",
+        "mower_count": 1,
+        "status": "Active"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.6000, 12.9750],
+          [77.6050, 12.9750],
+          [77.6050, 12.9700],
+          [77.6000, 12.9700],
+          [77.6000, 12.9750]
+        ]]
+      },
+      "properties": {
+        "name": "Perimeter C — no conflict",
+        "type": "Perimeter",
+        "mower_count": 3,
+        "status": "Active"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.6010, 12.9740],
+          [77.6060, 12.9740],
+          [77.6060, 12.9690],
+          [77.6010, 12.9690],
+          [77.6010, 12.9740]
+        ]]
+      },
+      "properties": {
+        "name": "Exclusion D — overlaps Perimeter C",
+        "type": "Exclusion",
+        "mower_count": 1,
+        "status": "Active"
+      }
+    }
+  ]
+}
