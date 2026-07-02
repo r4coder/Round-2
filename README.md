@@ -158,11 +158,18 @@ This went straight into `routes/zones.py`. The `FILTER` clause and the `::geogra
 
 ### Q3 — One example rejected or significantly edited
 
-**What AI generated:** When I asked for the OpenLayers `Modify` interaction setup, it generated a handler that called `feature.getGeometry().getCoordinates()` and passed the raw EPSG:3857 coordinates directly to the `onGeometryEdited` callback as GeoJSON. The backend expects EPSG:4326 (WGS84) lon/lat.
+**What AI generated:** Asked Claude to wire up three related pieces of sidebar/map UI behavior in one pass — the fill-color logic for zones that are both understaffed *and* currently selected, an axios interceptor to attach/refresh the `Authorization` header on API calls, and the "zoom in to zone" behavior when a zone is clicked in the sidebar.
 
-**What was wrong:** The coordinates would have been in web Mercator metres — something like `[8643736, 1461288]` — which would fail silently at `ST_GeomFromGeoJSON` on the backend (or produce a wildly incorrect polygon near the null island if it didn't error). The AI didn't account for the projection transform.
+**What was wrong:**
+- **Color priority:** The style function always applied the "selected" blue fill last, overwriting the orange understaffed fill whenever a zone was selected — so an understaffed zone looked normal the moment you clicked it, hiding the warning exactly when the operator was looking at it.
+- **Authorization header problem:** The interceptor didn't check whether a request was going out with no `Authorization` header at all (e.g. after a hard refresh before the token was rehydrated from storage) — it assumed a token was always present and only handled the case of an invalid/expired one.
+- **Refresh problem:** Because of the above, a missing header combined with no refresh token yet in memory sent the interceptor into a retry loop on `401` instead of failing cleanly and redirecting to login.
+- **Zoom in on zone selected:** The `fit()` call used the zone's extent with no padding and no guard for re-clicking the same zone — small zones ended up flush against the sidebar edge (partially hidden), and clicking an already-selected zone did nothing since the map view was already at that extent, so it never zoomed in.
 
-**What I changed:** Added `toLonLat(c)` (from `ol/proj`) to each coordinate in the `modifyend` handler, and added the same transform in the `drawend` handler. Also added the ring-closing check (`if (first[0] !== last[0] || first[1] !== last[1]) coords.push(first)`) which was missing — OpenLayers rings aren't always explicitly closed but GeoJSON spec requires it.
+**What I changed:**
+- Rewrote the style function so the understaffed warning is drawn as a persistent orange outline regardless of selection state, with selection only changing fill/opacity — fixing the color priority issue.
+- Split the interceptor logic: a missing header now short-circuits straight to a clean logout/redirect, while only an actual `401` on a request that *had* a token triggers the refresh flow — fixing both the authorization header problem and the refresh loop.
+- Added a `padding` option to `fit()` (accounting for sidebar width) and forced a re-fit on every click via a small epsilon change to the view options, so clicking any zone — including re-clicking the same one — reliably zooms in on it.
 
 ### Q4 — One part where AI was not useful
 
